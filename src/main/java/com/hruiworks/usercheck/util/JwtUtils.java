@@ -1,8 +1,13 @@
 package com.hruiworks.usercheck.util;
 
+import com.hruiworks.usercheck.pojo.entity.JwtEntity;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
@@ -15,7 +20,14 @@ import static java.time.temporal.ChronoUnit.*;
  */
 public class JwtUtils {
 
-    public static String generateHs256Jwt(Map<String, Object> claims, long time, TemporalUnit unit) {
+    /**
+     * 生成hs256的jwt和对应的签名key
+     * @param claims jwt payload map
+     * @param time 过期时间
+     * @param unit 过期时间单位
+     * @return 生成的jwt及对应的签名key
+     */
+    public static JwtEntity generateHs256Jwt(Map<String, Object> claims, long time, TemporalUnit unit) {
 
         long millis = 0L;
         if (unit instanceof ChronoUnit chronoUnit) {
@@ -40,10 +52,31 @@ public class JwtUtils {
             };
         }
 
-        return Jwts.builder()
-                .signWith(Jwts.SIG.HS256.key().build())
+        SecretKey secretKey = Jwts.SIG.HS256.key().build();
+        String signKeyStr = Encoders.BASE64.encode(secretKey.getEncoded());
+
+        String jwt = Jwts.builder()
+                .signWith(secretKey)
                 .claims(claims)
                 .expiration(new Date(System.currentTimeMillis() + millis))
                 .compact();
+
+        return new JwtEntity(jwt,signKeyStr);
+    }
+
+
+    /**
+     * 解析jwt
+     * @param jwtEntity 生成的jwt和对应的签名key
+     * @return payload的claims
+     */
+    public static Claims parseJwt(JwtEntity jwtEntity) {
+
+        return Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtEntity.getSignKeyStr())))
+                .build()
+                .parseSignedClaims(jwtEntity.getJwt())
+                .getPayload();
+
     }
 }
