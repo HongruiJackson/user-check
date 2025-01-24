@@ -28,6 +28,7 @@ public class JwtUtils {
                 case HOURS -> time * HOURS.getDuration().toMillis();
                 case HALF_DAYS -> time * DAYS.getDuration().toMillis() / 2;
                 case DAYS -> time * DAYS.getDuration().toMillis();
+                case WEEKS -> time * WEEKS.getDuration().toMillis();
                 case MONTHS -> time * MONTHS.getDuration().toMillis();
                 case YEARS -> time * YEARS.getDuration().toMillis();
                 case DECADES -> time * DECADES.getDuration().toMillis();
