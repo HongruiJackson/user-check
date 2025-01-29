@@ -14,10 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static java.time.temporal.ChronoUnit.*;
 
@@ -68,6 +65,37 @@ public class JwtUtils {
                 .compact();
 
         return new JwtEntity(jwt,signKeyStr);
+    }
+
+    /**
+     * 生成jwt，用已有的对象去生成
+     * @param sourceObject 要封装的对象
+     * @param time 过期时间
+     * @param unit 过期时间单位
+     * @return 生成的jwt及对应的签名key
+     */
+    public static <T> JwtEntity generateHs256Jwt( T sourceObject, long time, TemporalUnit unit) {
+        Map<String, Object> claims = new HashMap<>();
+        Class<T> aClass = (Class<T>) sourceObject.getClass();
+        ReflectEntity<T> tReflectEntity = ReflectCache.get(aClass);
+        Map<String, Method> fieldGetter = tReflectEntity.getFieldGetter();
+        Set<String> fieldNameSet = fieldGetter.keySet();
+
+        try {
+            for (String fieldName : fieldNameSet) {
+                Method getter = fieldGetter.get(fieldName);
+                Object invoke = getter.invoke(sourceObject);
+                if (Objects.isNull(invoke)) {
+                    continue;
+                }
+                claims.put(fieldName,invoke);
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
+        return generateHs256Jwt(claims,time,unit);
+
     }
 
 

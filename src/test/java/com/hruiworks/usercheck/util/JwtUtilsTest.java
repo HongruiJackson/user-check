@@ -6,7 +6,6 @@ import io.jsonwebtoken.Claims;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class JwtUtilsTest {
     }
 
     @Test
-    public void parseReflectTest() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void parseReflectTest() {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("nameOne","jack");
@@ -47,4 +46,13 @@ public class JwtUtilsTest {
 
     }
 
+    @Test
+    public void generateReflectTest() {
+        User user = new User();
+        user.setAge(2);
+//        user.setNameOne("jack");
+        JwtEntity jwtEntity = JwtUtils.generateHs256Jwt(user, 1, ChronoUnit.WEEKS);
+        User user1 = JwtUtils.parseJwt(jwtEntity, User.class);
+        System.out.println(user1);
+    }
 }
