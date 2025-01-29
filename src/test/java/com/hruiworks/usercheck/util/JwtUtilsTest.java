@@ -1,16 +1,12 @@
 package com.hruiworks.usercheck.util;
 
 import com.hruiworks.usercheck.pojo.entity.JwtEntity;
+import com.hruiworks.usercheck.pojo.testEntity.User;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoder;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.io.Encoders;
-import io.jsonwebtoken.security.Keys;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.crypto.SecretKey;
+import java.lang.reflect.InvocationTargetException;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +24,27 @@ public class JwtUtilsTest {
 
         Assert.assertEquals(1,claims1.get("test"));
         Assert.assertEquals(2,claims1.get("test2"));
+    }
+
+    @Test
+    public void parseReflectTest() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("nameOne","jack");
+        claims.put("age",2);
+
+        Map<String, Object> claims1 = new HashMap<>();
+        claims1.put("nameOne","jacky");
+        claims1.put("age",21);
+
+        JwtEntity jwtEntity = JwtUtils.generateHs256Jwt(claims, 1, ChronoUnit.WEEKS);
+        JwtEntity jwtEntity1 = JwtUtils.generateHs256Jwt(claims1, 1, ChronoUnit.WEEKS);
+        Class<User> userClass = User.class;
+        User user = JwtUtils.parseJwt(jwtEntity, userClass);
+        User user1 = JwtUtils.parseJwt(jwtEntity1, userClass);
+        System.out.println(user);
+        System.out.println(user1);
+
     }
 
 }

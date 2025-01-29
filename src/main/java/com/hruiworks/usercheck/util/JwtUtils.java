@@ -1,6 +1,8 @@
 package com.hruiworks.usercheck.util;
 
 import com.hruiworks.usercheck.pojo.entity.JwtEntity;
+import com.hruiworks.usercheck.pojo.reflect.ReflectEntity;
+import com.hruiworks.usercheck.support.ReflectCache;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -8,10 +10,14 @@ import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.*;
 
@@ -77,6 +83,36 @@ public class JwtUtils {
                 .build()
                 .parseSignedClaims(jwtEntity.getJwt())
                 .getPayload();
+
+    }
+
+    /**
+     * 解析jwt，并将其转换为对应的目标对象
+     * @param jwtEntity 生成的jwt和对应的签名key
+     * @param targetClass 目标类
+     * @return 目标对象
+     */
+    public static <T> T parseJwt(JwtEntity jwtEntity, Class<T> targetClass) {
+
+        ReflectEntity<T> reflectEntity = ReflectCache.get(targetClass);
+        T targetObject;
+        try {
+            targetObject = reflectEntity.getNonArgConstructor().newInstance();
+            Claims payload = parseJwt(jwtEntity);
+            Set<String> payloadKeySet = payload.keySet();
+            Map<String, Method> fieldSetter = reflectEntity.getFieldSetter();
+            for (String payloadKey : payloadKeySet) {
+                if (Objects.isNull(fieldSetter.get(payloadKey))) {
+                    continue;
+                }
+                fieldSetter.get(payloadKey).invoke(targetObject,payload.get(payloadKey));
+            }
+
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
+        return targetObject;
 
     }
 }
