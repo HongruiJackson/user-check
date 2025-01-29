@@ -1,4 +1,4 @@
-package com.hruiworks.usercheck.pojo.testEntity;
+package com.hruiworks.usercheck.testEntity;
 
 /**
  * @author JacksonZHR

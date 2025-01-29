@@ -1,7 +1,7 @@
 package com.hruiworks.usercheck.util;
 
 import com.hruiworks.usercheck.pojo.entity.JwtEntity;
-import com.hruiworks.usercheck.pojo.testEntity.User;
+import com.hruiworks.usercheck.testEntity.User;
 import io.jsonwebtoken.Claims;
 import org.junit.Assert;
 import org.junit.Test;
