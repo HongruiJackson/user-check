@@ -11,7 +11,8 @@ public class PasswordUtils {
 
     /**
      * 密码加密
-     * @param str 要加密的字符串
+     *
+     * @param str           要加密的字符串
      * @param algorithmEnum 信息摘要算法
      * @return 加密后字符串
      */
@@ -31,5 +32,17 @@ public class PasswordUtils {
             case SHA512 -> DigestUtils.sha512Hex(str);
         };
 
+    }
+
+    /**
+     * 密码加密
+     *
+     * @param str           要加密的字符串
+     * @param salt          “盐”
+     * @param algorithmEnum 信息摘要算法
+     * @return 加密后字符串
+     */
+    public static String encryptPassword(String str, String salt, MessageDigestAlgorithmEnum algorithmEnum) {
+        return encryptPassword(salt + str, algorithmEnum);
     }
 }
