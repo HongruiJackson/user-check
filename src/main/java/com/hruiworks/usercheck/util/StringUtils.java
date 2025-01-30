@@ -22,7 +22,7 @@ public class StringUtils {
         if (Objects.isNull(str)) {
             return false;
         }
-        if (minLength < 0 || maxLength <= minLength) {
+        if (minLength < 0 || maxLength < minLength) {
             throw new UserCheckException(StringUtilsExceptionEnum.WRONG_RANGE.getMsg());
         }
         return (str.length() >= minLength && str.length() <= maxLength);
