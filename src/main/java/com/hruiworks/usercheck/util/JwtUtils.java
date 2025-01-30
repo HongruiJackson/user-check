@@ -20,6 +20,7 @@ import static java.time.temporal.ChronoUnit.*;
 
 /**
  * @author JacksonZHR
+ * 用于生成和解析jwt的工具类
  */
 public class JwtUtils {
 
