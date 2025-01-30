@@ -12,4 +12,7 @@ public class UserCheckException extends RuntimeException{
         this.msg = msg;
     }
 
+    public String getMsg() {
+        return msg;
+    }
 }
