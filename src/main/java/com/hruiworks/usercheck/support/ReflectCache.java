@@ -1,7 +1,7 @@
 package com.hruiworks.usercheck.support;
 
 import com.hruiworks.usercheck.enums.ReflectCacheExceptionEnum;
-import com.hruiworks.usercheck.exception.ReflectCacheException;
+import com.hruiworks.usercheck.exception.UserCheckException;
 import com.hruiworks.usercheck.pojo.reflect.ReflectEntity;
 
 import java.lang.reflect.Method;
@@ -33,7 +33,7 @@ public class ReflectCache {
             try {
                 reflectEntity.setNonArgConstructor(targetClass.getDeclaredConstructor());
             } catch (NoSuchMethodException e) {
-                throw new ReflectCacheException(ReflectCacheExceptionEnum.NO_NON_ARG_CONSTRUCTOR.getMsg());
+                throw new UserCheckException(ReflectCacheExceptionEnum.NO_NON_ARG_CONSTRUCTOR.getMsg());
             }
             // setter
             List<Method> setterList = Arrays.stream(targetClass.getMethods()).filter(method -> method.getName().startsWith("set")).toList();
@@ -60,7 +60,7 @@ public class ReflectCache {
             try {
                 return  (ReflectEntity<T>) originalReflectEntity;
             } catch (Exception e) {
-                throw new ReflectCacheException(ReflectCacheExceptionEnum.WRONG_TYPE.getMsg());
+                throw new UserCheckException(ReflectCacheExceptionEnum.WRONG_TYPE.getMsg());
             }
         }
     }
