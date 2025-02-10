@@ -2,6 +2,7 @@ package com.hruiworks.usercheck.util;
 
 import com.hruiworks.usercheck.enums.MessageDigestAlgorithmEnum;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author JacksonZHR
@@ -44,5 +45,19 @@ public class PasswordUtils {
      */
     public static String encryptPassword(String str, String salt, MessageDigestAlgorithmEnum algorithmEnum) {
         return encryptPassword(salt + str, algorithmEnum);
+    }
+
+    /**
+     * 比较密码
+     *
+     * @param str1 字符串1
+     * @param str2 字符串2
+     * @return 当且仅当可比较的字符串相同的时候返回真
+     */
+    public static boolean comparePassword(String str1, String str2) {
+        if (StringUtils.isBlank(str1) || StringUtils.isBlank(str2)) {
+            return false;
+        }
+        return StringUtils.compare(str1, str2) == 0;
     }
 }
