@@ -9,6 +9,7 @@ public class UserCheckException extends RuntimeException{
     }
 
     public UserCheckException(String msg) {
+        super(msg);
         this.msg = msg;
     }
 
