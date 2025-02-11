@@ -84,6 +84,9 @@ public class JwtUtils {
 
         try {
             for (String fieldName : fieldNameSet) {
+                if (fieldName.equals("class")) {
+                    continue;
+                }
                 Method getter = fieldGetter.get(fieldName);
                 Object invoke = getter.invoke(sourceObject);
                 if (Objects.isNull(invoke)) {
