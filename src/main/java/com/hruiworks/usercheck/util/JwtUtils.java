@@ -137,7 +137,10 @@ public class JwtUtils {
                 if (Objects.isNull(fieldSetter.get(payloadKey))) {
                     continue;
                 }
-                fieldSetter.get(payloadKey).invoke(targetObject,payload.get(payloadKey));
+                Method method = fieldSetter.get(payloadKey);
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                Class<?> parameterType = parameterTypes[0];
+                fieldSetter.get(payloadKey).invoke(targetObject,ReflectCache.convertValueToType(payload.get(payloadKey),parameterType));
             }
 
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {

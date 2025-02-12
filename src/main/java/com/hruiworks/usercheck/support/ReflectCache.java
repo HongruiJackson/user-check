@@ -40,7 +40,7 @@ public class ReflectCache {
             for (Method method : setterList) {
                 String substring = method.getName().substring("set".length());
                 String fieldName = Character.toLowerCase(substring.charAt(0)) + substring.substring(1);
-                reflectEntity.setFieldSetter(fieldName,method);
+                reflectEntity.setFieldSetter(fieldName, method);
             }
 
             // getter
@@ -48,7 +48,7 @@ public class ReflectCache {
             for (Method method : getterList) {
                 String substring = method.getName().substring("get".length());
                 String fieldName = Character.toLowerCase(substring.charAt(0)) + substring.substring(1);
-                reflectEntity.setFieldGetter(fieldName,method);
+                reflectEntity.setFieldGetter(fieldName, method);
             }
 
             reflectCacheHashMap.put(className, reflectEntity);
@@ -58,10 +58,51 @@ public class ReflectCache {
         } else {
             // 有缓存强转
             try {
-                return  (ReflectEntity<T>) originalReflectEntity;
+                return (ReflectEntity<T>) originalReflectEntity;
             } catch (Exception e) {
                 throw new UserCheckException(ReflectCacheExceptionEnum.WRONG_TYPE.getMsg());
             }
+        }
+    }
+
+    /**
+     * 将值转换为目标类型
+     *
+     * @param value      原始值
+     * @param targetType 目标类型
+     * @return 转换后的值
+     */
+    public static Object convertValueToType(Object value, Class<?> targetType) {
+        if (value == null) {
+            return null;
+        }
+
+        // 如果值已经是目标类型，直接返回
+        if (targetType.isInstance(value)) {
+            return value;
+        }
+
+        // 根据目标类型进行转换
+        if (targetType == String.class) {
+            return value.toString();
+        } else if (targetType == Integer.class || targetType == int.class) {
+            return Integer.parseInt(value.toString());
+        } else if (targetType == Long.class || targetType == long.class) {
+            return Long.parseLong(value.toString());
+        } else if (targetType == Double.class || targetType == double.class) {
+            return Double.parseDouble(value.toString());
+        } else if (targetType == Boolean.class || targetType == boolean.class) {
+            return Boolean.parseBoolean(value.toString());
+        } else if (targetType == Float.class || targetType == float.class) {
+            return Float.parseFloat(value.toString());
+        } else if (targetType == Short.class || targetType == short.class) {
+            return Short.parseShort(value.toString());
+        } else if (targetType == Byte.class || targetType == byte.class) {
+            return Byte.parseByte(value.toString());
+        } else if (targetType == Character.class || targetType == char.class) {
+            return value.toString().charAt(0);
+        } else {
+            throw new IllegalArgumentException("Unsupported target type: " + targetType.getName());
         }
     }
 }
