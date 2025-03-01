@@ -64,4 +64,32 @@ public class ParamUtils {
 
         return isAnyBlank(params);
     }
+
+    /**
+     * 将对象当中的0长度字符串的字段转换为null，用于处理前端传空字符串的情况
+     * @param object 传入的对象
+     */
+    public static <T> void toNull(T object) {
+        Class<T> aClass = (Class<T>) object.getClass();
+        ReflectEntity<T> tReflectEntity = ReflectCache.get(aClass);
+        Map<String, Method> fieldGetter = tReflectEntity.getFieldGetter();
+        Map<String, Method> fieldSetter = tReflectEntity.getFieldSetter();
+        Set<String> fieldNameSet = fieldGetter.keySet();
+
+        try {
+            for (String fieldName : fieldNameSet) {
+                Method getter = fieldGetter.get(fieldName);
+                Object param = getter.invoke(object);
+                if (param instanceof String) {
+                    boolean blank = StringUtils.isBlank((String) param);
+                    if (BooleanUtils.isTrue(blank)) {
+                        fieldSetter.get(fieldName).invoke(object, (Object) null);
+                    }
+                }
+
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
